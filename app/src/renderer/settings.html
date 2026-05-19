@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Settings</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 13px -apple-system, system-ui, sans-serif; padding: 16px; }
+    h2 { margin: 0 0 12px; font-size: 14px; font-weight: 600; }
+    label { display: block; margin: 10px 0 4px; }
+    input[type=text], input[type=password] {
+      width: 100%; padding: 6px 8px; font: 12px ui-monospace, monospace;
+      border: 1px solid rgba(127,127,127,.4); border-radius: 6px;
+    }
+    .row { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    button { padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(127,127,127,.4); background: transparent; cursor: pointer; }
+    button.primary { background: #0a7cff; color: white; border-color: #0a7cff; }
+    small { color: #888; }
+  </style>
+</head>
+<body>
+  <h2>Screenshot Tray — Settings</h2>
+
+  <label for="base">Server base URL</label>
+  <input id="base" type="text" placeholder="https://cap.local" />
+
+  <label for="token">Upload token</label>
+  <input id="token" type="password" placeholder="Bearer token" />
+
+  <label for="hotkey">Hotkey</label>
+  <input id="hotkey" type="text" placeholder="CommandOrControl+Shift+9" />
+
+  <label for="localDir">Local save folder</label>
+  <input id="localDir" type="text" />
+
+  <div class="row"><input id="saveLocal" type="checkbox" /><label for="saveLocal" style="margin:0">Keep local copy</label></div>
+  <div class="row"><input id="notify" type="checkbox" /><label for="notify" style="margin:0">Notifications</label></div>
+  <div class="row"><input id="insecureTLS" type="checkbox" /><label for="insecureTLS" style="margin:0">Skip TLS verify (local CA)</label></div>
+
+  <div class="row" style="margin-top: 16px; justify-content: flex-end;">
+    <span id="status"></span>
+    <button id="save" class="primary">Save</button>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    async function load() {
+      const s = await window.cap.getSettings();
+      $('base').value = s.serverBase;
+      $('token').value = s.token;
+      $('hotkey').value = s.hotkey;
+      $('localDir').value = s.localDir;
+      $('saveLocal').checked = s.saveLocal;
+      $('notify').checked = s.notify;
+      $('insecureTLS').checked = s.insecureTLS;
+    }
+    $('save').addEventListener('click', async () => {
+      await window.cap.setSettings({
+        serverBase: $('base').value.trim(),
+        token: $('token').value,
+        hotkey: $('hotkey').value.trim(),
+        localDir: $('localDir').value.trim(),
+        saveLocal: $('saveLocal').checked,
+        notify: $('notify').checked,
+        insecureTLS: $('insecureTLS').checked
+      });
+      $('status').textContent = 'Saved';
+      setTimeout(() => $('status').textContent = '', 1500);
+    });
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "screenshot-tray",
+  "version": "0.1.0",
+  "description": "Tray app: hot-key screenshot → upload to cap.local → URL on clipboard",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac dmg --x64 --arm64"
+  },
+  "build": {
+    "appId": "io.fadymondy.screenshot-tray",
+    "productName": "Screenshot Tray",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dmg"
+    },
+    "files": [
+      "src/**/*",
+      "node_modules/**/*"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^32.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "dependencies": {
+    "electron-store": "^10.0.0"
+  }
+}

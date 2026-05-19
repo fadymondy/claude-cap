@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "Cap — Screenshot for Claude",
+  "version": "0.1.0",
+  "description": "Capture the current tab + recent network requests, upload to cap.local, URL on clipboard. MCP-friendly.",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage",
+    "clipboardWrite",
+    "contextMenus",
+    "notifications",
+    "webRequest",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "https://cap.fadymondy.com/*",
+    "https://cap.local/*",
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["console-tap.js"],
+      "run_at": "document_start",
+      "all_frames": false,
+      "world": "MAIN"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Capture screenshot for Claude (Cmd+Shift+9)"
+  },
+  "options_page": "options.html",
+  "commands": {
+    "capture": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+9",
+        "mac": "Command+Shift+9"
+      },
+      "description": "Capture visible tab + send to cap.local"
+    }
+  },
+  "icons": {
+    "128": "icon.png"
+  }
+}

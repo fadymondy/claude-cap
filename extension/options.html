@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Cap — Options</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 14px -apple-system, system-ui, sans-serif; max-width: 520px; margin: 24px auto; padding: 0 16px; }
+    h2 { margin: 0 0 16px; font-size: 16px; }
+    label { display: block; margin: 12px 0 4px; font-weight: 500; }
+    input[type=text], input[type=password], input[type=number] {
+      width: 100%; padding: 8px 10px; font: 13px ui-monospace, monospace;
+      border: 1px solid rgba(127,127,127,.4); border-radius: 6px; box-sizing: border-box;
+    }
+    .row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+    button { padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(127,127,127,.4); background: transparent; cursor: pointer; font-size: 13px; }
+    button.primary { background: #0a7cff; color: white; border-color: #0a7cff; }
+    #status { color: #0a7; margin-left: 12px; }
+    small { color: #888; }
+  </style>
+</head>
+<body>
+  <h2>Cap — Screenshot for Claude</h2>
+
+  <label>Server base URL</label>
+  <input id="serverBase" type="text" placeholder="https://cap.local" />
+
+  <label>Upload token (Bearer)</label>
+  <input id="token" type="password" placeholder="" />
+
+  <label>Hotkey behaviour (⌘⇧9)</label>
+  <select id="hotkeyMode" style="width:100%;padding:8px 10px;border:1px solid rgba(127,127,127,.4);border-radius:6px;font-size:13px;">
+    <option value="region">Pick a region (default)</option>
+    <option value="full">Capture whole visible tab</option>
+  </select>
+  <small>Changes what ⌘⇧9 does. Either mode is still available manually from the popup.</small>
+
+  <label>Clipboard payload format</label>
+  <select id="clipboardFormat" style="width:100%;padding:8px 10px;border:1px solid rgba(127,127,127,.4);border-radius:6px;font-size:13px;">
+    <option value="json">JSON — full metadata + URL (default)</option>
+    <option value="markdown">Markdown — readable, paste-friendly</option>
+    <option value="url">URL only</option>
+  </select>
+  <small>What gets copied to the clipboard after upload. JSON includes image URL, page URL, viewport, recent network requests.</small>
+
+  <label>Recent network capture window (ms)</label>
+  <input id="networkWindow" type="number" min="1000" max="120000" />
+  <small>How far back (in ms before capture) to include network requests in the metadata.</small>
+
+  <div class="row"><input id="notify" type="checkbox" /><label for="notify" style="margin:0">Show notifications</label></div>
+  <div class="row"><input id="copyClipboard" type="checkbox" /><label for="copyClipboard" style="margin:0">Copy URL to clipboard</label></div>
+  <div class="row"><input id="captureNetwork" type="checkbox" /><label for="captureNetwork" style="margin:0">Include network requests in metadata</label></div>
+  <div class="row"><input id="captureConsole" type="checkbox" /><label for="captureConsole" style="margin:0">Include console logs in metadata</label></div>
+  <div class="row"><input id="enableRemoteControl" type="checkbox" /><label for="enableRemoteControl" style="margin:0">Let Claude trigger captures + navigate via MCP</label></div>
+
+  <div class="row" style="margin-top:20px">
+    <button id="save" class="primary">Save</button>
+    <button id="shortcuts">Set keyboard shortcut…</button>
+    <span id="status"></span>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

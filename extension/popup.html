@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root { color-scheme: light dark; }
+    body { font: 13px -apple-system, system-ui, sans-serif; margin: 0; padding: 12px; width: 280px; }
+    button { width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(127,127,127,.4); background: transparent; cursor: pointer; font-size: 13px; }
+    button { margin-bottom: 6px; }
+    button.primary { background: #0a7cff; color: white; border-color: #0a7cff; }
+    .row { display: flex; gap: 8px; }
+    .row button { flex: 1; }
+    #result { margin-top: 10px; font-size: 11px; word-break: break-all; color: #888; }
+    #shortcut { font-size: 11px; color: #888; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div id="shortcut">Hotkey: ⌘⇧9 — drag to pick region · Esc cancel · Enter full tab</div>
+  <button id="capture-region" class="primary">Pick a region</button>
+  <button id="capture-full">Capture whole tab</button>
+  <div class="row">
+    <button id="manager">Manager</button>
+    <button id="options">Settings</button>
+  </div>
+  <div id="last"></div>
+  <div id="result"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

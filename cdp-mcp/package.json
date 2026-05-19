@@ -1,0 +1,18 @@
+{
+  "name": "cap-cdp-mcp",
+  "version": "0.1.0",
+  "description": "MCP that captures the active Chrome tab via CDP and returns screenshot + URL + title + recent network + console as one tool call.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "cap-cdp-mcp": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "start:http": "node src/index.js --http :3838"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "chrome-remote-interface": "^0.33.0"
+  }
+}

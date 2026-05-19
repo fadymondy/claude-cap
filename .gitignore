@@ -1,0 +1,38 @@
+# Local tokens / secrets — NEVER commit
+.local/
+*.env
+*.env.local
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# Build artifacts
+dist/
+out/
+build/
+*.dmg
+*.zip
+*.tar.gz
+*-windows.exe
+*-linux
+*-darwin
+
+# Go
+/server/cap-server
+/server/cap-server.exe
+*.test
+*.prof
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+.docker/

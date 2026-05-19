@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Cap — Manager</title>
+  <style>
+    :root { color-scheme: light dark; --bg: #fff; --fg: #111; --muted: #666; --border: rgba(127,127,127,.25); --accent: #0a7cff; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #1a1a1a; --fg: #eee; --muted: #aaa; --border: rgba(255,255,255,.12); } }
+    * { box-sizing: border-box; }
+    body { font: 14px -apple-system, system-ui, sans-serif; margin: 0; background: var(--bg); color: var(--fg); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+    header h1 { margin: 0; font-size: 16px; font-weight: 600; }
+    header .grow { flex: 1; }
+    main { padding: 20px; max-width: 1200px; margin: 0 auto; }
+    button { font: inherit; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--fg); cursor: pointer; }
+    button.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    input { font: inherit; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--fg); width: 100%; }
+    .login { max-width: 360px; margin: 80px auto; padding: 24px; border: 1px solid var(--border); border-radius: 10px; }
+    .login h2 { margin: 0 0 16px; font-size: 16px; }
+    .login label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .login input { margin-bottom: 14px; }
+    .login .err { color: #d22; font-size: 12px; margin-top: 4px; min-height: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .card { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg); display: flex; flex-direction: column; }
+    .card img { width: 100%; height: 160px; object-fit: cover; background: #0001; display: block; cursor: pointer; }
+    .card .body { padding: 10px 12px; font-size: 12px; flex: 1; min-height: 0; }
+    .card .title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card .page { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .card .meta { color: var(--muted); font-size: 11px; margin-top: 6px; }
+    .card .actions { display: flex; gap: 6px; padding: 8px 10px; border-top: 1px solid var(--border); }
+    .card .actions button { flex: 1; font-size: 12px; padding: 4px 8px; }
+    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .tab-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; }
+    .tab-row.pinned { border-color: var(--accent); background: rgba(10,124,255,0.06); }
+    .tab-row.pinned::before { content: "📌"; }
+    .tab-row .info { flex: 1; min-width: 0; }
+    .tab-row .info .t { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tab-row .info .u { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tab-row .badges { font-size: 10px; color: var(--muted); display: flex; gap: 6px; }
+    .tab-row button { font-size: 12px; padding: 4px 10px; }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 10px 18px; border-radius: 8px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+    #toast.show { opacity: 1; }
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal.show { display: flex; }
+    .modal img { max-width: 90vw; max-height: 80vh; border-radius: 6px; }
+    .modal pre { max-width: 90vw; max-height: 80vh; overflow: auto; background: #1a1a1a; color: #eee; padding: 14px; border-radius: 6px; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <div class="login" id="login-view">
+    <h2>Cap — Manager Login</h2>
+    <label for="server">Server URL</label>
+    <input id="server" type="text" value="https://cap.fadymondy.com" />
+    <label for="password">Password</label>
+    <input id="password" type="password" placeholder="admin password or token" />
+    <div class="err" id="login-err"></div>
+    <button id="login-btn" class="primary" style="width: 100%;">Log in</button>
+    <div style="font-size: 11px; color: var(--muted); margin-top: 12px;">
+      If your admin set <code>CAP_LOGIN_PASSWORD</code>, use that password. Otherwise paste the long token.
+    </div>
+  </div>
+
+  <!-- MANAGER -->
+  <div id="manager-view" style="display:none;">
+    <header>
+      <h1>Cap — Manager</h1>
+      <span class="grow"></span>
+      <button id="refresh">Refresh</button>
+      <button id="capture-now" class="primary">Capture pinned/active</button>
+      <button id="logout">Log out</button>
+    </header>
+    <main>
+      <section style="margin-bottom: 24px;">
+        <h2 style="font-size:14px;font-weight:600;margin:0 0 10px;">Tabs (pin one for Claude/MCP)</h2>
+        <div id="tabs-info" style="font-size:12px;color:var(--muted);margin-bottom:8px;"></div>
+        <div id="tabs-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </section>
+
+      <section>
+        <h2 style="font-size:14px;font-weight:600;margin:0 0 10px;">Screenshots</h2>
+        <div id="grid" class="grid"></div>
+        <div id="empty" class="empty" style="display:none;">No screenshots yet. Press ⌘⇧9 in any Chrome tab, or click "Capture pinned/active" above.</div>
+      </section>
+    </main>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="modal" id="modal">
+    <div id="modal-body"></div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="manager.js"></script>
+</body>
+</html>

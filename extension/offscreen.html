@@ -1,0 +1,22 @@
+<!doctype html>
+<html><body>
+<script>
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg?.type !== 'clipboard_write') return;
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = msg.text;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      sendResponse({ ok });
+    } catch (e) {
+      sendResponse({ ok: false, error: String(e) });
+    }
+    return false; // synchronous response
+  });
+</script>
+</body></html>
