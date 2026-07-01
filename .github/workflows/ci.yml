@@ -14,7 +14,7 @@ jobs:
       run:
         working-directory: server
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
@@ -40,7 +40,7 @@ jobs:
       run:
         working-directory: mcp
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -57,7 +57,7 @@ jobs:
       run:
         working-directory: extension
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: validate manifest.json
         run: |
           python3 -c "import json,sys; m=json.load(open('manifest.json')); assert m['manifest_version']==3, 'must be MV3'; print('manifest OK:', m['name'], 'v'+m['version'])"
