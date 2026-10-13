@@ -27,6 +27,8 @@ jobs:
         env:
           CAP_TOKEN: test-token
         run: |
+          # the server writes to a fixed /data/screenshots, as in its Docker image
+          sudo mkdir -p /data && sudo chown "$USER" /data
           /tmp/cap-server &
           PID=$!
           sleep 1
